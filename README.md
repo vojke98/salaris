@@ -1,2 +1,2 @@
-# salaris
+# Salaris
 TPO - Seminarska naloga
