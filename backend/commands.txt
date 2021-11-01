@@ -1,0 +1,9 @@
+root dir postavi na "salaris\backend"
+
+python manage.py makemigrations //izveze sve modele u bazu
+python manage.py migrate //izveze sve modele u bazu
+
+python manage.py createsuperuser //kreira admin korisnika
+    admin: #tpo2021
+
+python manage.py runserver //pokretanje servera
