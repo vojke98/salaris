@@ -1,0 +1,14 @@
+// pip install django
+// pip install djangorestframework
+
+root dir postavi na "salaris\backend"
+
+python manage.py makemigrations //izveze sve modele u bazu
+python manage.py migrate //izveze sve modele u bazu
+
+python manage.py createsuperuser //kreira admin korisnika
+    admin: #tpo2021
+
+python manage.py runserver //pokretanje servera
+                           // ako ne radi python onda ukucaj python3
+                           // ako i to ne radi ispisi se sa fakulteta :)
