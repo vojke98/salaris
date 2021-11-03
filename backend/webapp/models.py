@@ -20,8 +20,8 @@ class Address(model):
     def __str__(self):
         return "{} {}, {}".format(self.street, self.house_no, self.city)
 
+
 class Role(model):
-    #id = models.IntegerField()
     name = models.CharField(max_length=20)
     min_hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
 
@@ -30,7 +30,6 @@ class Role(model):
 
 
 class Staff(model):
-    #id = models.IntegerField()
     tax_no = models.CharField(max_length=10)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -46,7 +45,6 @@ class Staff(model):
 
 
 class Company(model):
-    #id = models.IntegerField()
     tax_no = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     address = models.ForeignKey(Address, related_name="comp_adr", on_delete=models.DO_NOTHING)
@@ -57,7 +55,6 @@ class Company(model):
 
 
 class Workhour(model):
-    #id = models.IntegerField()
     staff_id = models.ForeignKey(Staff, related_name="work_staff", on_delete=models.DO_NOTHING)
     comp_id = models.ForeignKey(Company, related_name="work_comp", on_delete=models.DO_NOTHING)
     date_from = models.DateTimeField()
