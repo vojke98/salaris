@@ -41,7 +41,7 @@ class Staff(model):
     phone_no = models.CharField(max_length=20)
 
     def __str__(self):
-        return "{}, {}".format(self.last_name, self.first_name)
+        return "{}, {}\n{} {}$\n{} {}".format(self.last_name, self.first_name, self.role, self.hourly_rate, self.email, self.phone_no)
 
 
 class Company(model):

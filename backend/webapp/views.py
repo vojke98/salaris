@@ -12,7 +12,27 @@ from . serializers import *
 
 # Create your views here.
 
+
+# Pogledaj /webapp/templates/webapp/foobar.html
+# example localhost:8000/webapp/
+# jer se funkcija poziva sa path('',..) u urls.py
+def foobar(request):
+    user = "Ademir"
+    return render(request, 'webapp/foobar.html', { 'user' : user })
+
+
+#  example: localhost:8000/webapp/1
+#  argument id je ova jedinica koja dolazi nakon /webapp/
+#  to se definise u urls.py ... tamo je napisano <int:id>
+def getUser(request, id):
+    user = get_object_or_404(Staff, pk=id)
+    
+    return render(request, 'webapp/userinfo.html', { 'user': user })
+
+def home(request):
+    return render(request, 'webapp/home.html', { 'welcome' : "Hello there, welcome!"})
 ##########  CITY  ############
+"""
 class CityList(APIView):
 
     def get(self, request):
@@ -267,3 +287,4 @@ class WorkhourDetails(APIView):
         workhour = self.get_object(pk)
         workhour.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+"""
