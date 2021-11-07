@@ -41,7 +41,7 @@ class Staff(model):
     phone_no = models.CharField(max_length=20)
 
     def __str__(self):
-        return "{}, {}\n{} {}$\n{} {}".format(self.last_name, self.first_name, self.role, self.hourly_rate, self.email, self.phone_no)
+        return "{} {} | {}".format(self.last_name, self.first_name, self.email)
 
 
 class Company(model):
@@ -51,7 +51,7 @@ class Company(model):
     ceo = models.ForeignKey(Staff, related_name="comp_ceo", on_delete=models.DO_NOTHING)
 
     def __str__(self):
-        return "Name: {},\nAddress: {},\nCEO: {}\nTax number: {}".format(self.name, self.address, self.ceo, self.tax_no)
+        return "Name: {}, Tax number: {}".format(self.name, self.tax_no)
 
 
 class Workhour(model):
