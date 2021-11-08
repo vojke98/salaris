@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from rest_framework.urlpatterns import format_suffix_patterns
+import webapp
 from webapp import views
+from django.urls.conf import include
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -35,9 +38,8 @@ urlpatterns = [
     path('api/companies/', views.CompanyList.as_view()),
     path('api/companies/<int:pk>/', views.CompanyDetails.as_view()),
 
-    path('api/user_company/', views.User_CompanyList.as_view()),
-    path('api/user_company/<int:pk>/', views.User_CompanyDetails.as_view()),
-
     path('api/workhours/', views.WorkhourList.as_view()),
     path('api/workhours/<int:pk>/', views.WorkhourDetails.as_view()),
+
+    path('webapp/', include('webapp.urls'))
 ]

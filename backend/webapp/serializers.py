@@ -37,10 +37,7 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = "__all__"
 
-class UserCompanySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User_Company
-        fields = "__all__"
+
 
 class WorkhourSerializer(serializers.ModelSerializer):
 

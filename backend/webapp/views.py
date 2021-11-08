@@ -1,3 +1,4 @@
+from django.http.response import HttpResponse
 from django.shortcuts import render
 
 from django.http import HttpRequest
@@ -11,6 +12,24 @@ from . serializers import *
 
 
 # Create your views here.
+def testfoobar(request, message):
+    return HttpResponse("Hello %s, you little bitch!" % message)
+
+
+
+def get_user_workhours(request, user_id):
+    u = User.objects.get(pk=user_id)
+
+    if not u:
+        return Http404
+
+    w = Workhour.objects.get(user=u)
+
+    if not w:
+        return Http404
+    return HttpResponse(str(w))
+
+
 
 ##########  CITY  ############
 class CityList(APIView):

@@ -12,3 +12,8 @@ python manage.py createsuperuser //kreira admin korisnika
 python manage.py runserver //pokretanje servera
                            // ako ne radi python onda ukucaj python3
                            // ako i to ne radi ispisi se sa fakulteta :)
+
+
+
+// python manage.py shell
+// from webapp.models import *klasa
