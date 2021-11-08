@@ -29,16 +29,12 @@ class Role(model):
         return "{} - {}".format(self.name, self.min_hourly_rate)
 
 
-class Staff(model):
+class User(model):
     tax_no = models.CharField(max_length=10)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    role = models.ForeignKey(Role, related_name="staff_role", on_delete=DO_NOTHING)
-    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
     address = models.ForeignKey(Address, related_name="staff_adr", on_delete=models.DO_NOTHING)
     email = models.EmailField()
-    gender = models.CharField(max_length=1) #M/F
-    phone_no = models.CharField(max_length=20)
 
     def __str__(self):
         return "{}, {}".format(self.last_name, self.first_name)
@@ -48,17 +44,24 @@ class Company(model):
     tax_no = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     address = models.ForeignKey(Address, related_name="comp_adr", on_delete=models.DO_NOTHING)
-    ceo = models.ForeignKey(Staff, related_name="comp_ceo", on_delete=models.DO_NOTHING)
+    ceo = models.ForeignKey(User, related_name="comp_ceo", on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return "Name: {},\nAddress: {},\nCEO: {}\nTax number: {}".format(self.name, self.address, self.ceo, self.tax_no)
 
 
+class User_Company(model):
+    hourly_rate = models.DecimalField(max_digits=10, decimal_places=2)
+    user_id = models.ForeignKey(User, related_name="usr_comp_usrid", on_delete=models.DO_NOTHING)
+    company_id = models.ForeignKey(Company, related_name="company_id", on_delete=models.DO_NOTHING)
+    role_id =models.ForeignKey(Role, related_name="role_id", on_delete=models.DO_NOTHING)
+
+
+
 class Workhour(model):
-    staff_id = models.ForeignKey(Staff, related_name="work_staff", on_delete=models.DO_NOTHING)
-    comp_id = models.ForeignKey(Company, related_name="work_comp", on_delete=models.DO_NOTHING)
+    user_company_id = models.ForeignKey(User_Company, related_name="user_comp_id", on_delete=models.DO_NOTHING, blank =True)
     date_from = models.DateTimeField()
     date_until = models.DateTimeField()
 
     def __str__(self):
-        return "Company: {}, Worker: {}, From: {}, Until: {}".format(self.comp_id, self.staff_id, self.date_from, self.date_until)
+        return "User company id: {}, From: {}, Until: {}".format(self.user_company_id, self.date_from, self.date_until)

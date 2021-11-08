@@ -144,12 +144,12 @@ class RoleDetails(APIView):
 class StaffList(APIView):
 
     def get(self, request):
-        staff = Staff.objects.all()
-        serializer = StaffSerializer(staff, many=True)
+        staff = User.objects.all()
+        serializer = UserSerializer(staff, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
-        serializer = StaffSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -160,18 +160,18 @@ class StaffDetails(APIView):
 
     def get_object(self, pk):
         try:
-            return Staff.objects.get(pk=pk)
-        except Staff.DoesNotExist:
+            return User.objects.get(pk=pk)
+        except User.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
         staff = self.get_object(pk)
-        serializer = StaffSerializer(staff)
+        serializer = UserSerializer(staff)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         staff = self.get_object(pk)
-        serializer = StaffSerializer(staff, data=request.data)
+        serializer = UserSerializer(staff, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -225,6 +225,47 @@ class CompanyDetails(APIView):
         company.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+##########  User_Company  #############
+
+class User_CompanyList(APIView):
+    def get(self, request):
+        usercompany = User_Company.objects.all()
+        serializer = UserCompanySerializer(usercompany, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = UserCompanySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class User_CompanyDetails(APIView):
+
+    def get_object(self, pk):
+        try:
+            return User_Company.objects.get(pk=pk)
+        except User_Company.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        usercompany = self.get_object(pk)
+        serializer = UserCompanySerializer(usercompany)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        u_company = self.get_object(pk)
+        serializer = UserCompanySerializer(u_company, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        usercompany = self.get_object(pk)
+        usercompany.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 
 ##########  WORKHOUR  #############
 class WorkhourList(APIView):

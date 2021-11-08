@@ -24,10 +24,10 @@ class RoleSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class StaffSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Staff
+        model = User
         fields = "__all__"
 
 
@@ -37,6 +37,10 @@ class CompanySerializer(serializers.ModelSerializer):
         model = Company
         fields = "__all__"
 
+class UserCompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User_Company
+        fields = "__all__"
 
 class WorkhourSerializer(serializers.ModelSerializer):
 

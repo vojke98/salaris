@@ -35,6 +35,9 @@ urlpatterns = [
     path('api/companies/', views.CompanyList.as_view()),
     path('api/companies/<int:pk>/', views.CompanyDetails.as_view()),
 
+    path('api/user_company/', views.User_CompanyList.as_view()),
+    path('api/user_company/<int:pk>/', views.User_CompanyDetails.as_view()),
+
     path('api/workhours/', views.WorkhourList.as_view()),
     path('api/workhours/<int:pk>/', views.WorkhourDetails.as_view()),
 ]
