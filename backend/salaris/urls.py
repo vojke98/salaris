@@ -41,5 +41,8 @@ urlpatterns = [
     path('api/workhours/', views.WorkhourList.as_view()),
     path('api/workhours/<int:pk>/', views.WorkhourDetails.as_view()),
 
+    path('api/join_request/', views.JoinRequestList.as_view()),
+    path('api/join_request/<int:pk>/', views.JoinRequestDetails.as_view()),
+
     path('webapp/', include('webapp.urls'))
 ]

@@ -44,10 +44,10 @@ class CityAdmin(admin.ModelAdmin):
 
 class RoleAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Role info',  {'fields': ['name', 'min_hourly_rate']})
+        ('Role info',  {'fields': ['company', 'name', 'min_hourly_rate', 'is_admin']})
     ]
 
-    list_display = ('name', 'min_hourly_rate')
+    list_display = ('company', 'name', 'min_hourly_rate', 'is_admin')
 
     search_fields = ['name']
 
@@ -63,6 +63,16 @@ class WorkhourAdmin(admin.ModelAdmin):
     search_fields = ['user']
 
 
+class JoinRequestAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Join Requests info',  {'fields': ['user', 'company', 'request_date']})
+    ]
+
+    list_display = ('user', 'company', 'request_date')
+
+    search_fields = ['user']
+
+
 
 
 admin.site.register(City, CityAdmin)
@@ -71,3 +81,4 @@ admin.site.register(Role, RoleAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Workhour, WorkhourAdmin)
+admin.site.register(JoinRequest, JoinRequestAdmin)

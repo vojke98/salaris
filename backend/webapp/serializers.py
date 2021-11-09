@@ -44,3 +44,10 @@ class WorkhourSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workhour
         fields = "__all__"
+
+
+class JoinRequestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = JoinRequest
+        fields = "__all__"
