@@ -30,7 +30,6 @@ def get_user_workhours(request, user_id):
     return HttpResponse(str(w))
 
 
-
 ##########  CITY  ############
 class CityList(APIView):
 
@@ -244,47 +243,6 @@ class CompanyDetails(APIView):
         company.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-##########  User_Company  #############
-
-class User_CompanyList(APIView):
-    def get(self, request):
-        usercompany = User_Company.objects.all()
-        serializer = UserCompanySerializer(usercompany, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = UserCompanySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class User_CompanyDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return User_Company.objects.get(pk=pk)
-        except User_Company.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        usercompany = self.get_object(pk)
-        serializer = UserCompanySerializer(usercompany)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        u_company = self.get_object(pk)
-        serializer = UserCompanySerializer(u_company, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        usercompany = self.get_object(pk)
-        usercompany.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
 
 ##########  WORKHOUR  #############
 class WorkhourList(APIView):

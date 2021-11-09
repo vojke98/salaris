@@ -57,6 +57,7 @@ class Workhour(model):
     company = models.ForeignKey(Company, related_name="workh_company", on_delete=models.DO_NOTHING)
     date_from = models.DateTimeField()
     date_until = models.DateTimeField()
+    hourly_rate_at_the_time = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return "User: {}, Company: {}, From: {}, Until: {}".format(self.user, self.company,self.date_from, self.date_until)

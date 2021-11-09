@@ -6,7 +6,7 @@ class UserAdmin(admin.ModelAdmin):
     fieldsets = [
         ('User info',  {'fields': ['first_name', 'last_name', 'address', 'email', 'tax_no', 'company', 'role']})
     ]
-    
+
     list_display = ('first_name', 'last_name', 'address', 'email', 'tax_no', 'address', 'company', 'role')
 
     search_fields = ['first_name']
@@ -55,10 +55,10 @@ class RoleAdmin(admin.ModelAdmin):
 
 class WorkhourAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Workhours info',  {'fields': ['user', 'company', 'date_from', 'date_until']})
+        ('Workhours info',  {'fields': ['user', 'company', 'date_from', 'date_until', 'hourly_rate_at_the_time']})
     ]
 
-    list_display = ('user', 'company','date_from', 'date_until')
+    list_display = ('user', 'company','date_from', 'date_until', 'hourly_rate_at_the_time')
 
     search_fields = ['user']
 
