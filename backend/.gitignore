@@ -1,0 +1,3 @@
+./create_super_user.sh
+./initial_data.json
+./db.sqlite3
