@@ -71,3 +71,11 @@ class JoinRequest(model):
 
     def __str__(self):
         return "User '{}' requested to join '{}' on '{}'".format(self.user, self.company, self.request_date)
+
+class LeaveRequest(model):
+    user = models.ForeignKey(User, related_name="leaveReq_user", on_delete=CASCADE)
+    company = models.ForeignKey(Company, related_name="leaveReq_company", on_delete=CASCADE)
+    request_date = models.DateTimeField()
+
+    def __str__(self):
+        return "User '{}' requested to leave '{}' on '{}'".format(self.user, self.company, self.request_date)

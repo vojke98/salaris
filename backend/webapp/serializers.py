@@ -51,3 +51,9 @@ class JoinRequestSerializer(serializers.ModelSerializer):
     class Meta:
         model = JoinRequest
         fields = "__all__"
+
+class LeaveRequestSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LeaveRequest
+        fields = "__all__"

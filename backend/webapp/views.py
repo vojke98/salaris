@@ -158,12 +158,12 @@ class RoleDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-##########  STAFF  #############
-class StaffList(APIView):
+##########  USER  #############
+class UserList(APIView):
 
     def get(self, request):
-        staff = User.objects.all()
-        serializer = UserSerializer(staff, many=True)
+        user = User.objects.all()
+        serializer = UserSerializer(user, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
@@ -174,7 +174,7 @@ class StaffList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StaffDetails(APIView):
+class UserDetails(APIView):
 
     def get_object(self, pk):
         try:
@@ -183,21 +183,21 @@ class StaffDetails(APIView):
             raise Http404
 
     def get(self, request, pk, format=None):
-        staff = self.get_object(pk)
-        serializer = UserSerializer(staff)
+        user = self.get_object(pk)
+        serializer = UserSerializer(user)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        staff = self.get_object(pk)
-        serializer = UserSerializer(staff, data=request.data)
+        user = self.get_object(pk)
+        serializer = UserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
-        staff = self.get_object(pk)
-        staff.delete()
+        user = self.get_object(pk)
+        user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -287,7 +287,7 @@ class WorkhourDetails(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-##########  WORKHOUR  #############
+##########  JOIN_REQUEST  #############
 class JoinRequestList(APIView):
 
     def get(self, request):
@@ -317,8 +317,8 @@ class JoinRequestDetails(APIView):
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
-        company = self.get_object(pk)
-        serializer = JoinRequestSerializer(company, data=request.data)
+        joinRequest = self.get_object(pk)
+        serializer = JoinRequestSerializer(joinRequest, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -327,4 +327,47 @@ class JoinRequestDetails(APIView):
     def delete(self, request, pk, format=None):
         joinRequest = self.get_object(pk)
         joinRequest.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+##########  LEAVE_REQUEST  #############
+class LeaveRequestList(APIView):
+
+    def get(self, request):
+        leaveRequest = LeaveRequest.objects.all()
+        serializer = LeaveRequestSerializer(leaveRequest, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        serializer = LeaveRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LeaveRequestDetails(APIView):
+
+    def get_object(self, pk):
+        try:
+            return LeaveRequest.objects.get(pk=pk)
+        except LeaveRequest.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        leaveRequest = self.get_object(pk)
+        serializer = LeaveRequest(leaveRequest)
+        return Response(serializer.data)
+
+    def put(self, request, pk, format=None):
+        leaveRequest = self.get_object(pk)
+        serializer = LeaveRequestSerializer(leaveRequest, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk, format=None):
+        leaveRequest = self.get_object(pk)
+        leaveRequest.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

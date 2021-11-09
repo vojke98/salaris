@@ -73,6 +73,16 @@ class JoinRequestAdmin(admin.ModelAdmin):
     search_fields = ['user']
 
 
+class LeaveRequestAdmin(admin.ModelAdmin):
+    fieldsets = [
+        ('Leave Requests info',  {'fields': ['user', 'company', 'request_date']})
+    ]
+
+    list_display = ('user', 'company', 'request_date')
+
+    search_fields = ['user']
+
+
 
 
 admin.site.register(City, CityAdmin)
@@ -82,3 +92,4 @@ admin.site.register(User, UserAdmin)
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Workhour, WorkhourAdmin)
 admin.site.register(JoinRequest, JoinRequestAdmin)
+admin.site.register(LeaveRequest, LeaveRequestAdmin)

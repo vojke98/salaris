@@ -32,8 +32,8 @@ urlpatterns = [
     path('api/roles/', views.RoleList.as_view()),
     path('api/roles/<int:pk>/', views.RoleDetails.as_view()),
 
-    path('api/staff/', views.StaffList.as_view()),
-    path('api/staff/<int:pk>/', views.StaffDetails.as_view()),
+    path('api/user/', views.UserList.as_view()),
+    path('api/user/<int:pk>/', views.UserDetails.as_view()),
 
     path('api/companies/', views.CompanyList.as_view()),
     path('api/companies/<int:pk>/', views.CompanyDetails.as_view()),
@@ -43,6 +43,9 @@ urlpatterns = [
 
     path('api/join_request/', views.JoinRequestList.as_view()),
     path('api/join_request/<int:pk>/', views.JoinRequestDetails.as_view()),
+
+    path('api/leave_request/', views.LeaveRequestList.as_view()),
+    path('api/leave_request/<int:pk>/', views.LeaveRequestDetails.as_view()),
 
     path('webapp/', include('webapp.urls'))
 ]
