@@ -4,10 +4,10 @@ from .models import *
 # Register your models here.
 class UserAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('User info',  {'fields': ['first_name', 'last_name', 'address', 'email', 'tax_no', 'company', 'role']})
+        ('User info',  {'fields': ['first_name', 'last_name', 'address', 'email', 'tax_no', 'company', 'role', 'qualifications', 'user_about_info']})
     ]
 
-    list_display = ('pk', 'first_name', 'last_name', 'address', 'email', 'tax_no', 'company', 'role')
+    list_display = ('pk', 'first_name', 'last_name', 'address', 'email', 'tax_no', 'company', 'role', 'qualifications', 'user_about_info')
 
     search_fields = ['first_name', 'last_name', 'address__street', 'address__house_no', 'address__city__post_no', 'address__city__name', 'email', 'tax_no', 'company__tax_no', 'company__name', 'role__name']
 
@@ -24,10 +24,10 @@ class AddressAdmin(admin.ModelAdmin):
 
 class CompanyAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Company info',  {'fields': ['reference_key', 'tax_no', 'name', 'address']})
+        ('Company info',  {'fields': ['reference_key', 'tax_no', 'name', 'address', 'company_about_info']})
     ]
 
-    list_display = ('pk', 'reference_key', 'tax_no', 'name', 'address')
+    list_display = ('pk', 'reference_key', 'tax_no', 'name', 'address', 'company_about_info')
 
     search_fields = ['tax_no', 'name', 'address__street', 'house_no', 'address__city__post_no', 'address__city__name']
 

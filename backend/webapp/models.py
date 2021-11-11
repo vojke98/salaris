@@ -32,6 +32,7 @@ class Company(model):
     tax_no = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     address = models.ForeignKey(Address, related_name="company_address", on_delete=DO_NOTHING, blank=True)
+    company_about_info = models.TextField(blank=True)
 
     def __str__(self):
         return "{}, {}".format(self.name, self.address,  self.tax_no)
@@ -58,6 +59,8 @@ class User(model):
     email = models.EmailField()
     company = models.ForeignKey(Company, related_name='user_company', on_delete=DO_NOTHING, blank=True)
     role = models.ForeignKey(Role, related_name='user_role', on_delete=DO_NOTHING, blank=True)
+    qualifications = models.CharField(max_length=100)
+    user_about_info = models.TextField(blank=True)
 
     def __str__(self):
         return "{}, {}".format(self.last_name, self.first_name)
