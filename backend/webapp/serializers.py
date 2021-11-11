@@ -4,6 +4,9 @@ from .models import *
 
 class CitySerializer(serializers.ModelSerializer):
 
+    post_no = serializers.IntegerField(required=True)
+    name = serializers.CharField(max_length=50, required=True)
+
     class Meta:
         model = City
         #fields = ("post_no", "name")
@@ -50,10 +53,4 @@ class JoinRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = JoinRequest
-        fields = "__all__"
-
-class LeaveRequestSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = LeaveRequest
         fields = "__all__"

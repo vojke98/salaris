@@ -27,7 +27,4 @@ urlpatterns = [
 
     path('join-request/', views.JoinRequestList.as_view()),
     path('join-request/<int:pk>/', views.JoinRequestDetails.as_view()),
-
-    path('leave-request/', views.LeaveRequestList.as_view()),
-    path('leave-request/<int:pk>/', views.LeaveRequestDetails.as_view()),
 ]

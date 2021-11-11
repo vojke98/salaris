@@ -11,6 +11,9 @@ class City(model):
     def __str__(self):
         return "{}, {}".format(self.post_no, self.name)
 
+    class Meta:
+        verbose_name_plural = 'Cities'
+
 
 class Address(model):
     house_no = models.CharField(max_length=10)
@@ -20,15 +23,21 @@ class Address(model):
     def __str__(self):
         return "{} {}, {}".format(self.street, self.house_no, self.city)
 
+    class Meta:
+        verbose_name_plural = 'Addresses'
+
 
 class Company(model):
-    id = models.CharField(max_length=30, primary_key=True)
+    reference_key = models.CharField(max_length=30)
     tax_no = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
     address = models.ForeignKey(Address, related_name="company_address", on_delete=DO_NOTHING, blank=True)
 
     def __str__(self):
-        return "Name: {},\nAddress: {}\nTax number: {}".format(self.name, self.address,  self.tax_no)
+        return "{}, {}".format(self.name, self.address,  self.tax_no)
+
+    class Meta:
+        verbose_name_plural = 'Companies'
 
 
 class Role(model):
@@ -38,7 +47,7 @@ class Role(model):
     is_admin = models.BooleanField()
 
     def __str__(self):
-        return "{} in {} has minimal hourly rate {}{}.".format(self.name, self.company, self.min_hourly_rate, " and manages company" if self.is_admin else '')
+        return "{} at {} has minimal hourly rate of {}€.".format(self.name, self.company, self.min_hourly_rate)
 
 
 class User(model):
@@ -62,20 +71,14 @@ class Workhour(model):
     hourly_rate_at_the_time = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
-        return "User: {}, Company: {}, From: {}, Until: {}".format(self.user, self.company,self.date_from, self.date_until)
+        return "{} worked in {}, in period from {} - {}".format(self.user, self.company,self.date_from, self.date_until)
 
 class JoinRequest(model):
     user = models.ForeignKey(User, related_name="joinReq_user", on_delete=CASCADE)
     company = models.ForeignKey(Company, related_name="joinReq_company", on_delete=CASCADE)
     request_date = models.DateTimeField()
+    response_date = models.DateTimeField(blank=True, null=True)
+    status = models.CharField(max_length=8, default="PENDING") #APPROVED, PENDING, REJECTED
 
     def __str__(self):
-        return "User '{}' requested to join '{}' on '{}'".format(self.user, self.company, self.request_date)
-
-class LeaveRequest(model):
-    user = models.ForeignKey(User, related_name="leaveReq_user", on_delete=CASCADE)
-    company = models.ForeignKey(Company, related_name="leaveReq_company", on_delete=CASCADE)
-    request_date = models.DateTimeField()
-
-    def __str__(self):
-        return "User '{}' requested to leave '{}' on '{}'".format(self.user, self.company, self.request_date)
+        return "{} requested to join {} on '{}'".format(self.user, self.company, self.request_date)
