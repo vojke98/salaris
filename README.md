@@ -1,4 +1,4 @@
 # Salaris
 TPO - Seminarska naloga
 
-ZAOBIDJI!!!!
+NE OVDJE TEBRA! IDI NA FRONTEND ILI BACKEND BRANCH
