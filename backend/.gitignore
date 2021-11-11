@@ -1,3 +1,5 @@
 create_super_user.sh
-initial_data.json
+dummy_data.json
 db.sqlite3
+salaris/__pycache__
+salaris/webapp/__pycache__
