@@ -72,6 +72,7 @@ class Workhour(model):
     date_from = models.DateTimeField()
     date_until = models.DateTimeField()
     hourly_rate_at_the_time = models.DecimalField(max_digits=10, decimal_places=2)
+    warning = models.BooleanField(default=False)
 
     def __str__(self):
         return "{} worked in {}, in period from {} - {}".format(self.user, self.company,self.date_from, self.date_until)
