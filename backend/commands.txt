@@ -17,3 +17,5 @@ python manage.py runserver //pokretanje servera
 
 // python manage.py shell
 // from webapp.models import *klasa
+
+py initilaize.py
