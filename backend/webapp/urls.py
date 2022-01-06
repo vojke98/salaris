@@ -5,7 +5,9 @@ from . import views
 urlpatterns = [
     #path("", views.CityList, name="cities"),
     path("testfoobar/<str:message>/", views.testfoobar, name='testfoobar'),
-    path("get_user_workhours/<int:user_id>/", views.get_user_workhours, name='get_user_workhours'),
+    path("get-user-workhours/<int:user_id>/", views.get_user_workhours, name='get_user_workhours'),
+    path("get-users-from-company/<int:company_id>/", views.get_users_from_company, name='get_users_from_company'),
+    path("get-user-data/<str:user_email>/", views.get_user_data, name='get_user_data'),
 
     path('cities/', views.CityList.as_view()),
     path('cities/<int:pk>/', views.CityDetails.as_view()),

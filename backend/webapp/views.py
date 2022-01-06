@@ -1,14 +1,18 @@
-from django.http.response import HttpResponse
+from django.http import response
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from django.http import HttpRequest
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.utils import tree
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from . models import *
 from . serializers import *
+
+import json
 
 
 # Create your views here.
@@ -18,17 +22,52 @@ def testfoobar(request, message):
 
 
 def get_user_workhours(request, user_id):
+    
+    u = User.objects.get(pk=user_id)  # Check if null ?
+
+    if u == None:                     # NE RADI
+        return Http404           
+
+    workhours = WorkhourSerializer(Workhour.objects.all().filter(user=u), many=True).data
+
+    response = {}
+    response['workhours'] = workhours
+
+    return HttpResponse(json.dumps(response),
+                        content_type="application/json",
+                        status=status.HTTP_200_OK)
+
+
+# Treba model companies promijeniti da se moze traziti po user_id
+def get_user_companies(request, user_id):
     u = User.objects.get(pk=user_id)
 
-    if not u:
-        return Http404
 
-    w = Workhour.objects.get(user=u)
+def get_users_from_company(request, company_id):
+    c = Company.objects.get(pk=company_id)
 
-    if not w:
-        return Http404
-    return HttpResponse(str(w))
+    users = UserSerializer(User.objects.all().filter(company=c), many=True).data
 
+    response = {}
+    response['users'] = users
+
+    return HttpResponse(json.dumps(response),
+                        content_type="application/json",
+                        status=status.HTTP_200_OK)
+
+
+def get_user_data(request, user_email):
+    u = User.objects.get(email=user_email)
+
+    user_data = UserSerializer(u).data
+
+    response = {}
+    response['user'] = user_data
+
+    return HttpResponse(json.dumps(response),
+                        content_type="application/json",
+                        status=status.HTTP_200_OK)
+    
 
 ##########  CITY  ############
 class CityList(APIView):
