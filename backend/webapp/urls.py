@@ -9,6 +9,8 @@ urlpatterns = [
     path("get-users-from-company/<int:company_id>/", views.get_users_from_company, name='get_users_from_company'),
     path("get-user-data/<str:user_email>/", views.get_user_data, name='get_user_data'),
     path("create-user/", views.create_user, name='create_user'),
+    path("create-workhour/", views.create_workhour, name='create_workhour'),
+    path("create-company/", views.create_company, name='create_company'),
 
     path('cities/', views.CityList.as_view()),
     path('cities/<int:pk>/', views.CityDetails.as_view()),
