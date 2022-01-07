@@ -12,6 +12,8 @@ from rest_framework import status
 from . models import *
 from . serializers import *
 
+from rest_framework.decorators import api_view
+
 import json
 
 
@@ -67,7 +69,25 @@ def get_user_data(request, user_email):
     return HttpResponse(json.dumps(response),
                         content_type="application/json",
                         status=status.HTTP_200_OK)
-    
+
+
+@api_view(['POST'])
+def create_user(request, format=None):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except:
+            return Response({"message": "ERROR DETECT"})
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
+            return Response({'message': 'ERROR DETECT'})
+
+        return HttpResponse("OK")
+
+
 
 ##########  CITY  ############
 class CityList(APIView):

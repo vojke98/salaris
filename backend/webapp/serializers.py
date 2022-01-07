@@ -34,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+
 class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
