@@ -8,6 +8,9 @@ urlpatterns = [
     path("get-user-workhours/<int:user_id>/", views.get_user_workhours, name='get_user_workhours'),
     path("get-users-from-company/<int:company_id>/", views.get_users_from_company, name='get_users_from_company'),
     path("get-user-data/<str:user_email>/", views.get_user_data, name='get_user_data'),
+    path("get-join-requests/", views.get_join_requests, name='get_join_requests'),
+
+
     path("create-user/", views.create_user, name='create_user'),
     path("create-workhour/", views.create_workhour, name='create_workhour'),
     path("create-company/", views.create_company, name='create_company'),

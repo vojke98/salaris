@@ -19,7 +19,7 @@ import json
 
 # Create your views here.
 def testfoobar(request, message):
-    return HttpResponse("Hello %s, you little bitch!" % message)
+    return HttpResponse("Hello %s, whats up?" % message)
 
 
 
@@ -65,6 +65,18 @@ def get_user_data(request, user_email):
 
     response = {}
     response['user'] = user_data
+
+    return HttpResponse(json.dumps(response),
+                        content_type="application/json",
+                        status=status.HTTP_200_OK)
+
+def get_join_requests(request):
+    join_requests = JoinRequest.objects.all()
+
+    serializer = JoinRequestSerializer(join_requests, many=True).data
+
+    response = {}
+    response['join_requests'] = serializer
 
     return HttpResponse(json.dumps(response),
                         content_type="application/json",
