@@ -52,5 +52,5 @@ clear_migrations()
 initialize()
 create_super_user()
 load_dummy_data()
-cmd = 'python manage.py runserver'
+cmd = 'python manage.py runserver ' + get_ip() + ':8000'
 os.system(cmd)

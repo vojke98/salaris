@@ -1,210 +1,51 @@
-from django.http import response
-from django.http.response import HttpResponse, JsonResponse
-from django.shortcuts import render
-
-from django.http import HttpRequest
-from django.http import Http404
+from django.contrib.auth.models import User, Group
+from rest_framework import generics, viewsets, permissions, status
 from django.shortcuts import get_object_or_404
-from django.utils import tree
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
-from . models import *
-from . serializers import *
-
-from rest_framework.decorators import api_view
-
-import json
-
-
-# Create your views here.
-def testfoobar(request, message):
-    return HttpResponse("Hello %s, whats up?" % message)
-
-
-
-def get_user_workhours(request, user_id):
-    
-    try:
-        u = User.objects.get(pk=user_id)  # Check if null ?
-    except:                     
-        return HttpResponse("That user doesn't exist!")          
-
-    workhours = WorkhourSerializer(Workhour.objects.all().filter(user=u), many=True).data
-
-    response = {}
-    response['workhours'] = workhours
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/json",
-                        status=status.HTTP_200_OK)
-
-
-def get_users_from_company(request, company_id):
-    try:
-        c = Company.objects.get(pk=company_id)
-    except:
-        return HttpResponse("Bad company_id!")
-
-    users = UserSerializer(User.objects.all().filter(company=c), many=True).data
-
-    response = {}
-    response['users'] = users
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/json",
-                        status=status.HTTP_200_OK)
-
-
-def get_user_data(request, user_email):
-    try:
-        u = User.objects.get(email=user_email)
-    except:
-        return HttpResponse("User with email {} doesnt exist".format(user_email))
-
-    user_data = UserSerializer(u).data
-
-    response = {}
-    response['user'] = user_data
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/json",
-                        status=status.HTTP_200_OK)
-
-def get_join_requests(request):
-    try:
-        join_requests = JoinRequest.objects.all()
-    except:
-        return HttpResponse("Bad request!")
-
-    serializer = JoinRequestSerializer(join_requests, many=True).data
-
-    response = {}
-    response['join_requests'] = serializer
-
-    return HttpResponse(json.dumps(response),
-                        content_type="application/json",
-                        status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-def create_user(request, format=None):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except:
-            return Response({"message": "ERROR DETECT"})
-        serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            print(serializer.errors)
-            return Response({'message': 'ERROR DETECT'})
-
-        return HttpResponse("OK")
-
-@api_view(['POST'])
-def create_workhour(request, format=None):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except:
-            return Response({"message": "ERROR DETECT"})
-        serializer = WorkhourSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            print(serializer.errors)
-            return Response({'message': 'ERROR DETECT'})
-
-        return HttpResponse("OK")
-
-@api_view(['POST'])
-def create_company(request, format=None):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except:
-            return Response({"message": "ERROR DETECT"})
-        serializer = CompanySerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            print(serializer.errors)
-            return Response({'message': 'ERROR DETECT'})
-
-        return HttpResponse("OK")
-
-
-@api_view(['POST'])
-def create_join_request(request, format=None):
-    if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-        except:
-            return Response({"message": "ERROR DETECT"})
-        serializer = JoinRequestSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            print(serializer.errors)
-            return Response({'message': 'ERROR DETECT'})
-
-        return HttpResponse("OK")
-
-
+from .serializers import *
 
 ##########  CITY  ############
-class CityList(APIView):
+class CityViewSet(viewsets.ModelViewSet):
+    serializer_class = CitySerializer
+    queryset = City.objects.all().order_by("pk")
+    #permission_classes = [permissions.IsAuthenticated]
 
-    def get(self, request):
-        cities = City.objects.all()
-        serializer = CitySerializer(cities, many=True)
+    def list(self, request):
+        queryset = City.objects.all()
+        serializer = CitySerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = City.objects.all()
+        city = get_object_or_404(queryset, pk=pk)
+        serializer = CitySerializer(city)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = CitySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class CityDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return City.objects.get(pk=pk)
-        except City.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        city = self.get_object(pk)
-        serializer = CitySerializer(city)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        city = self.get_object(pk)
-        serializer = CitySerializer(city, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        city = self.get_object(pk)
-        city.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 ##########  ADDRESS  #############
-class AddressList(APIView):
+class AddressViewSet(viewsets.ModelViewSet):
+    serializer_class = AddressSerializer
+    queryset = Address.objects.all()
 
-    def get(self, request):
-        addresses = Address.objects.all()
-        serializer = AddressSerializer(addresses, many=True)
+    def list(self, request):
+        queryset = Address.objects.all()
+        serializer = AddressSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = Address.objects.all()
+        address = get_object_or_404(queryset, pk=pk)
+        serializer = AddressSerializer(address)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = AddressSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -212,42 +53,23 @@ class AddressList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AddressDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return Address.objects.get(pk=pk)
-        except Address.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        address = self.get_object(pk)
-        serializer = AddressSerializer(address)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        address = self.get_object(pk)
-        serializer = AddressSerializer(address, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        address = self.get_object(pk)
-        address.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##########  ROLE  #############
-class RoleList(APIView):
+class RoleViewSet(viewsets.ModelViewSet):
+    serializer_class = RoleSerializer
+    queryset = Role.objects.all()
 
-    def get(self, request):
-        roles = Role.objects.all()
-        serializer = RoleSerializer(roles, many=True)
+    def list(self, request):
+        queryset = Role.objects.all()
+        serializer = RoleSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = Role.objects.all()
+        role = get_object_or_404(queryset, pk=pk)
+        serializer = RoleSerializer(role)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = RoleSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -255,42 +77,26 @@ class RoleList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RoleDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return Role.objects.get(pk=pk)
-        except Role.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        role = self.get_object(pk)
-        serializer = RoleSerializer(role)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        role = self.get_object(pk)
-        serializer = RoleSerializer(role, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        role = self.get_object(pk)
-        role.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##########  USER  #############
-class UserList(APIView):
+class UserViewSet(viewsets.ModelViewSet):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
 
-    def get(self, request):
-        user = User.objects.all()
-        serializer = UserSerializer(user, many=True)
+    def list(self, request):
+        queryset = self.queryset
+        company = self.request.query_params.get('company')
+        if company is not None:
+            queryset = queryset.filter(company=company)
+        serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = self.queryset
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -298,42 +104,23 @@ class UserList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return User.objects.get(pk=pk)
-        except User.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        user = self.get_object(pk)
-        serializer = UserSerializer(user, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        user = self.get_object(pk)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##########  COMPANY  #############
-class CompanyList(APIView):
+class CompanyViewSet(viewsets.ModelViewSet):
+    serializer_class = CompanySerializer
+    queryset = Company.objects.all()
 
-    def get(self, request):
-        company = Company.objects.all()
-        serializer = CompanySerializer(company, many=True)
+    def list(self, request):
+        queryset = Company.objects.all()
+        serializer = CompanySerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = Company.objects.all()
+        company = get_object_or_404(queryset, pk=pk)
+        serializer = CompanySerializer(company)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -341,42 +128,23 @@ class CompanyList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class CompanyDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return Company.objects.get(pk=pk)
-        except Company.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        company = self.get_object(pk)
-        serializer = CompanySerializer(company)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        company = self.get_object(pk)
-        serializer = CompanySerializer(company, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        company = self.get_object(pk)
-        company.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##########  WORKHOUR  #############
-class WorkhourList(APIView):
+class WorkhourViewSet(viewsets.ModelViewSet):
+    serializer_class = WorkhourSerializer
+    queryset = Workhour.objects.all()
 
-    def get(self, request):
-        workhour = Workhour.objects.all()
-        serializer = WorkhourSerializer(workhour, many=True)
+    def list(self, request):
+        queryset = Workhour.objects.all()
+        serializer = WorkhourSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = Workhour.objects.all()
+        workhour = get_object_or_404(queryset, pk=pk)
+        serializer = WorkhourSerializer(workhour)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = WorkhourSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -384,71 +152,25 @@ class WorkhourList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class WorkhourDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return Workhour.objects.get(pk=pk)
-        except Workhour.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        workhour = self.get_object(pk)
-        serializer = WorkhourSerializer(workhour)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        company = self.get_object(pk)
-        serializer = WorkhourSerializer(company, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        workhour = self.get_object(pk)
-        workhour.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##########  JOIN_REQUEST  #############
-class JoinRequestList(APIView):
+class JoinRequestViewSet(viewsets.ModelViewSet):
+    serializer_class = JoinRequestSerializer
+    queryset = JoinRequest.objects.all()
 
-    def get(self, request):
-        joinRequest = JoinRequest.objects.all()
-        serializer = JoinRequestSerializer(joinRequest, many=True)
+    def list(self, request):
+        queryset = JoinRequest.objects.all()
+        serializer = JoinRequestSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    def post(self, request, format=None):
+    def retrieve(self, request, pk=None):
+        queryset = JoinRequest.objects.all()
+        joinRequest = get_object_or_404(queryset, pk=pk)
+        serializer = JoinRequestSerializer(joinRequest)
+        return Response(serializer.data)
+
+    def create(self, request):
         serializer = JoinRequestSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class JoinRequestDetails(APIView):
-
-    def get_object(self, pk):
-        try:
-            return JoinRequest.objects.get(pk=pk)
-        except JoinRequest.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        joinRequest = self.get_object(pk)
-        serializer = JoinRequestSerializer(joinRequest)
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        joinRequest = self.get_object(pk)
-        serializer = JoinRequestSerializer(joinRequest, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        joinRequest = self.get_object(pk)
-        joinRequest.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
