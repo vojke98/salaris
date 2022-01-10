@@ -25,10 +25,10 @@ def testfoobar(request, message):
 
 def get_user_workhours(request, user_id):
     
-    u = User.objects.get(pk=user_id)  # Check if null ?
-
-    if u == None:                     # NE RADI
-        return Http404           
+    try:
+        u = User.objects.get(pk=user_id)  # Check if null ?
+    except:                     
+        return HttpResponse("That user doesn't exist!")          
 
     workhours = WorkhourSerializer(Workhour.objects.all().filter(user=u), many=True).data
 
@@ -40,13 +40,11 @@ def get_user_workhours(request, user_id):
                         status=status.HTTP_200_OK)
 
 
-# Treba model companies promijeniti da se moze traziti po user_id
-def get_user_companies(request, user_id):
-    u = User.objects.get(pk=user_id)
-
-
 def get_users_from_company(request, company_id):
-    c = Company.objects.get(pk=company_id)
+    try:
+        c = Company.objects.get(pk=company_id)
+    except:
+        return HttpResponse("Bad company_id!")
 
     users = UserSerializer(User.objects.all().filter(company=c), many=True).data
 
@@ -59,7 +57,10 @@ def get_users_from_company(request, company_id):
 
 
 def get_user_data(request, user_email):
-    u = User.objects.get(email=user_email)
+    try:
+        u = User.objects.get(email=user_email)
+    except:
+        return HttpResponse("User with email {} doesnt exist".format(user_email))
 
     user_data = UserSerializer(u).data
 
@@ -71,7 +72,10 @@ def get_user_data(request, user_email):
                         status=status.HTTP_200_OK)
 
 def get_join_requests(request):
-    join_requests = JoinRequest.objects.all()
+    try:
+        join_requests = JoinRequest.objects.all()
+    except:
+        return HttpResponse("Bad request!")
 
     serializer = JoinRequestSerializer(join_requests, many=True).data
 
