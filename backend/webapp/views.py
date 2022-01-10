@@ -120,6 +120,24 @@ def create_company(request, format=None):
         return HttpResponse("OK")
 
 
+@api_view(['POST'])
+def create_join_request(request, format=None):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+        except:
+            return Response({"message": "ERROR DETECT"})
+        serializer = JoinRequestSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            print(serializer.errors)
+            return Response({'message': 'ERROR DETECT'})
+
+        return HttpResponse("OK")
+
+
+
 ##########  CITY  ############
 class CityList(APIView):
 

@@ -11,6 +11,7 @@ urlpatterns = [
     path("create-user/", views.create_user, name='create_user'),
     path("create-workhour/", views.create_workhour, name='create_workhour'),
     path("create-company/", views.create_company, name='create_company'),
+    path("create-join-request/", views.create_join_request, name='create_join_request'),
 
     path('cities/', views.CityList.as_view()),
     path('cities/<int:pk>/', views.CityDetails.as_view()),
