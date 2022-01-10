@@ -2,6 +2,7 @@ from django.contrib.auth.models import User, Group
 from rest_framework import generics, viewsets, permissions, status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from .serializers import *
 
 ##########  CITY  ############
@@ -85,14 +86,19 @@ class UserViewSet(viewsets.ModelViewSet):
     def list(self, request):
         queryset = self.queryset
         company = self.request.query_params.get('company')
-        if company is not None:
-            queryset = queryset.filter(company=company)
+        if company is not None: queryset = queryset.filter(company=company)
+        email = self.request.query_params.get('email')
+        if email is not None:  queryset = queryset.filter(email=email)
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = self.queryset
-        user = get_object_or_404(queryset, pk=pk)
+        if pk is not None: user = get_object_or_404(queryset, pk=pk)
+        else:
+            email = self.request.query_params.get('email')
+            password = self.request.query_params.get('password')
+            user = get_object_or_404(queryset, email=email, password=password)
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
@@ -102,6 +108,10 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return super().update(request, *args, **kwargs)
 
 
 ##########  COMPANY  #############
@@ -135,6 +145,8 @@ class WorkhourViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = Workhour.objects.all()
+        user = self.request.query_params.get('user')
+        if user is not None:  queryset = queryset.filter(user=user)
         serializer = WorkhourSerializer(queryset, many=True)
         return Response(serializer.data)
 
@@ -159,6 +171,8 @@ class JoinRequestViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = JoinRequest.objects.all()
+        company = self.request.query_params.get('company')
+        if company is not None: queryset = queryset.filter(company=company)
         serializer = JoinRequestSerializer(queryset, many=True)
         return Response(serializer.data)
 

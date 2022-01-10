@@ -52,15 +52,16 @@ class Role(model):
 
 
 class User(model):
-    tax_no = models.CharField(max_length=10)
-    first_name = models.CharField(max_length=30)
-    last_name = models.CharField(max_length=30)
+    tax_no = models.TextField(blank=False)
+    first_name = models.TextField(blank=False)
+    last_name = models.TextField(blank=False)
     address = models.ForeignKey(Address, related_name="user_address", on_delete=DO_NOTHING, blank=True)
-    email = models.EmailField()
-    company = models.ForeignKey(Company, related_name='user_company', on_delete=DO_NOTHING, blank=True)
-    role = models.ForeignKey(Role, related_name='user_role', on_delete=DO_NOTHING, blank=True)
-    qualifications = models.CharField(max_length=100)
+    email = models.EmailField(blank=False)
+    company = models.ForeignKey(Company, related_name='user_company', on_delete=DO_NOTHING, blank=True, null=True)
+    role = models.ForeignKey(Role, related_name='user_role', on_delete=DO_NOTHING, blank=True, null=True)
+    qualifications = models.TextField(blank=True)
     user_about_info = models.TextField(blank=True)
+    password = models.TextField(blank=False)
 
     def __str__(self):
         return "{}, {}".format(self.last_name, self.first_name)
