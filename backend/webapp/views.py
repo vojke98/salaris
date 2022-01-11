@@ -4,7 +4,6 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .serializers import *
-import json
 
 ##########  CITY  ############
 class CityViewSet(viewsets.ModelViewSet):
@@ -86,19 +85,21 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = self.queryset
-        body = request.body.decode("utf-8").strip()
-        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
-        if content is not None:
-            if "company" in content:  queryset = queryset.filter(company=content["company"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
-            if "email" in content: queryset = queryset.filter(email=content["email"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
-
+        print(self.request.query_params)
+        email = self.request.query_params.get('email')
+        if email is not None: queryset = queryset.filter(email=email)
+        password = self.request.query_params.get('password')
+        if password is not None:  queryset = queryset.filter(password=password)
         serializer = self.serializer_class(queryset, many=True)
-
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = self.queryset
-        user = get_object_or_404(queryset, pk=pk)
+        if pk is not None: user = get_object_or_404(queryset, pk=pk)
+        else:
+            email = self.request.query_params.get('email')
+            password = self.request.query_params.get('password')
+            user = get_object_or_404(queryset, email=email, password=password)
         serializer = self.serializer_class(user)
         return Response(serializer.data)
 
@@ -145,13 +146,9 @@ class WorkhourViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = self.queryset
-        body = request.body.decode("utf-8").strip()
-        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
-        if content is not None:
-            if "user" in content:  queryset = queryset.filter(company=content["user"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
-
+        user = self.request.query_params.get('user')
+        if user is not None:  queryset = queryset.filter(user=user)
         serializer = self.serializer_class(queryset, many=True)
-
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
@@ -175,11 +172,8 @@ class JoinRequestViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = self.queryset
-        body = request.body.decode("utf-8").strip()
-        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
-        if content is not None:
-            if "company" in content:  queryset = queryset.filter(company=content["company"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
-
+        company = self.request.query_params.get('company')
+        if company is not None: queryset = queryset.filter(company=company)
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 

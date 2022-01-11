@@ -28,8 +28,8 @@ class Address(model):
 
 
 class Company(model):
-    reference_key = models.CharField(max_length=30)
-    tax_no = models.CharField(max_length=10)
+    reference_key = models.CharField(max_length=30, unique=True)
+    tax_no = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
     address = models.ForeignKey(Address, related_name="company_address", on_delete=DO_NOTHING, blank=True)
     company_about_info = models.TextField(blank=True)
@@ -52,11 +52,11 @@ class Role(model):
 
 
 class User(model):
-    tax_no = models.TextField(blank=False)
+    tax_no = models.TextField(blank=False, unique=True)
     first_name = models.TextField(blank=False)
     last_name = models.TextField(blank=False)
     address = models.ForeignKey(Address, related_name="user_address", on_delete=DO_NOTHING, blank=True)
-    email = models.EmailField(blank=False)
+    email = models.EmailField(blank=False, unique=True)
     company = models.ForeignKey(Company, related_name='user_company', on_delete=DO_NOTHING, blank=True, null=True)
     role = models.ForeignKey(Role, related_name='user_role', on_delete=DO_NOTHING, blank=True, null=True)
     qualifications = models.TextField(blank=True)
@@ -77,6 +77,7 @@ class Workhour(model):
 
     def __str__(self):
         return "{} worked in {}, in period from {} - {}".format(self.user, self.company,self.date_from, self.date_until)
+
 
 class JoinRequest(model):
     user = models.ForeignKey(User, related_name="joinReq_user", on_delete=CASCADE)
