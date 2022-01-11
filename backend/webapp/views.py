@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from .serializers import *
+import json
 
 ##########  CITY  ############
 class CityViewSet(viewsets.ModelViewSet):
@@ -12,18 +13,18 @@ class CityViewSet(viewsets.ModelViewSet):
     #permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request):
-        queryset = City.objects.all()
-        serializer = CitySerializer(queryset, many=True)
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = City.objects.all()
+        queryset = self.queryset
         city = get_object_or_404(queryset, pk=pk)
-        serializer = CitySerializer(city)
+        serializer = self.serializer_class(city)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = CitySerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -36,18 +37,18 @@ class AddressViewSet(viewsets.ModelViewSet):
     queryset = Address.objects.all()
 
     def list(self, request):
-        queryset = Address.objects.all()
-        serializer = AddressSerializer(queryset, many=True)
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Address.objects.all()
+        queryset = self.queryset
         address = get_object_or_404(queryset, pk=pk)
-        serializer = AddressSerializer(address)
+        serializer = self.serializer_class(address)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = AddressSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -60,18 +61,18 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
 
     def list(self, request):
-        queryset = Role.objects.all()
-        serializer = RoleSerializer(queryset, many=True)
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Role.objects.all()
+        queryset = self.queryset
         role = get_object_or_404(queryset, pk=pk)
-        serializer = RoleSerializer(role)
+        serializer = self.serializer_class(role)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = RoleSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -85,25 +86,24 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         queryset = self.queryset
-        company = self.request.query_params.get('company')
-        if company is not None: queryset = queryset.filter(company=company)
-        email = self.request.query_params.get('email')
-        if email is not None:  queryset = queryset.filter(email=email)
-        serializer = UserSerializer(queryset, many=True)
+        body = request.body.decode("utf-8").strip()
+        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
+        if content is not None:
+            if "company" in content:  queryset = queryset.filter(company=content["company"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
+            if "email" in content: queryset = queryset.filter(email=content["email"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
+
+        serializer = self.serializer_class(queryset, many=True)
+
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         queryset = self.queryset
-        if pk is not None: user = get_object_or_404(queryset, pk=pk)
-        else:
-            email = self.request.query_params.get('email')
-            password = self.request.query_params.get('password')
-            user = get_object_or_404(queryset, email=email, password=password)
-        serializer = UserSerializer(user)
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = self.serializer_class(user)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -120,18 +120,18 @@ class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
 
     def list(self, request):
-        queryset = Company.objects.all()
-        serializer = CompanySerializer(queryset, many=True)
+        queryset = self.queryset
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Company.objects.all()
+        queryset = self.queryset
         company = get_object_or_404(queryset, pk=pk)
-        serializer = CompanySerializer(company)
+        serializer = self.serializer_class(company)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = CompanySerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -144,20 +144,24 @@ class WorkhourViewSet(viewsets.ModelViewSet):
     queryset = Workhour.objects.all()
 
     def list(self, request):
-        queryset = Workhour.objects.all()
-        user = self.request.query_params.get('user')
-        if user is not None:  queryset = queryset.filter(user=user)
-        serializer = WorkhourSerializer(queryset, many=True)
+        queryset = self.queryset
+        body = request.body.decode("utf-8").strip()
+        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
+        if content is not None:
+            if "user" in content:  queryset = queryset.filter(company=content["user"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
+
+        serializer = self.serializer_class(queryset, many=True)
+
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = Workhour.objects.all()
+        queryset = self.queryset
         workhour = get_object_or_404(queryset, pk=pk)
-        serializer = WorkhourSerializer(workhour)
+        serializer = self.serializer_class(workhour)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = WorkhourSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -170,20 +174,23 @@ class JoinRequestViewSet(viewsets.ModelViewSet):
     queryset = JoinRequest.objects.all()
 
     def list(self, request):
-        queryset = JoinRequest.objects.all()
-        company = self.request.query_params.get('company')
-        if company is not None: queryset = queryset.filter(company=company)
-        serializer = JoinRequestSerializer(queryset, many=True)
+        queryset = self.queryset
+        body = request.body.decode("utf-8").strip()
+        content = json.loads(body or "null") # GET REQUEST BODY AND PARSE IT TO JSON
+        if content is not None:
+            if "company" in content:  queryset = queryset.filter(company=content["company"]) # CHECK IF KEY EXISTS, IF TRUE FILTER BY VALUE
+
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
-        queryset = JoinRequest.objects.all()
+        queryset = self.queryset
         joinRequest = get_object_or_404(queryset, pk=pk)
-        serializer = JoinRequestSerializer(joinRequest)
+        serializer = self.serializer_class(joinRequest)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = JoinRequestSerializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
